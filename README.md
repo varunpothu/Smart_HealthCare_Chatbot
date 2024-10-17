@@ -80,19 +80,19 @@ This project utilizes various datasets to provide accurate health recommendation
 
 ### Datasets:
 1. **[Medicine Recommendation System Dataset](https://www.kaggle.com/datasets/noorsaeed/medicine-recommendation-system-dataset/data)**  
-   License: **CC0: Public Domain**
+   License: **Apache 2.0**
    
 2. **[11000 Medicine Details Dataset](https://www.kaggle.com/datasets/singhnavjot2062001/11000-medicine-details)**  
-   License: **CC BY-SA 4.0**
+   License: **CC0: Public Domain**
 
 3. **[WebMD Drug Reviews Dataset](https://www.kaggle.com/datasets/rohanharode07/webmd-drug-reviews-dataset/data)**  
-   License: **CC BY-SA 4.0**
+   License: **CC0: Public Domain**
 
 4. **[Drugs Side Effects and Medical Condition Dataset](https://www.kaggle.com/datasets/jithinanievarghese/drugs-side-effects-and-medical-condition)**  
    License: **CC0: Public Domain**
 
 5. **[MedQuAD Medical Question Answer Dataset](https://www.kaggle.com/datasets/pythonafroz/medquad-medical-question-answer-for-ai-research/data)**  
-   License: **Apache 2.0**
+   License: **CC BY-SA 4.0**
 
 6. **[LayoutLM Dataset](https://www.kaggle.com/datasets/jpmiller/layoutlm/data)**  
    License: **CC BY-SA 4.0**
@@ -151,7 +151,7 @@ We welcome contributions to the project! If you would like to improve features, 
 ## 📧 Contact Information
 If you have any questions or need further assistance, feel free to reach out:
 - **Email**: pothuvarun@gmail.com
-- **GitHub**: [GitHub Profile](https://github.com/varunpothu)
+- **GitHub**: [My GitHub Profile](https://github.com/varunpothu)
   
 Academic Usage:
 This project is submitted as part of my final academic project. If you are using or adapting this project for academic purposes, please ensure that appropriate attribution is provided to both the original dataset authors and this project.
