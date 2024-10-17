@@ -74,7 +74,7 @@ Once the Flask server is running, you can interact with the chatbot by entering 
 - Reminders for taking prescribed medications
 - Emergency assistance by showing nearby NHS facilities
 
-  ![Smart_HealthCare_Chatbot1](https://drive.google.com/file/d/1pHuY-uZXCOfoc19Oqq3dIqeUAih2QFWI)
+![Smart_HealthCare_Chatbot1](https://drive.google.com/uc?id=1pHuY-uZXCOfoc19Oqq3dIqeUAih2QFWI)
 
 ## 📂 Datasets
 This project utilizes various datasets to provide accurate health recommendations. The datasets are hosted on Kaggle and are subject to different licenses. Ensure you review and comply with the dataset licenses.
