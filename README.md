@@ -139,3 +139,4 @@ If you have any questions or need further assistance, feel free to reach out:
 Academic Usage:
 This project is submitted as part of my final academic project. If you are using or adapting this project for academic purposes, please ensure that appropriate attribution is provided to both the original dataset authors and this project.
 
+Image Source: [Live Chat AI](https://livechatai.com/blog/how-to-use-ai-chatbots-for-healthcare)
