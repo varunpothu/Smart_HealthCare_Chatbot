@@ -3,7 +3,7 @@
 ## 🚀 Overview
 The **Smart Healthcare Chatbot** is an AI-driven system that provides personalized health condition analysis, symptom checking, virtual consultations, medication reminders, and health education. It offers real-time support for general health inquiries and can assist during emergencies by suggesting nearby NHS facilities using the user’s location. The chatbot integrates Machine Learning (ML), Natural Language Processing (NLP) and Large Language Model (LLM) techniques to analyze user inputs and give tailored recommendations.
 
-![Smart_HealthCare_Chatbot](https://drive.google.com/file/d/1e9l881IAC7H3flLam8fjbGiC9dGfiv_5/view?usp=drive_link)
+![Smart_HealthCare_Chatbot](https://drive.google.com/uc?id=1e9l881IAC7H3flLam8fjbGiC9dGfiv_5)
 
 ## 📑 Table of Contents
 1. [Features](#-features)
