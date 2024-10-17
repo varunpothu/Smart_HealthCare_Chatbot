@@ -118,7 +118,10 @@ smart-healthcare-chatbot/
 ```
 
 ## 📄 License & Attribution
-This project is licensed under the **MIT License**. You are free to use, modify, and distribute this project, but please provide appropriate attribution to this repository and its contributors.
+This Smart Healthcare Chatbot for Personalized Health Condition Analysis project is part of my final project for academic purposes. It utilizes various publicly available datasets that are licensed under CC0: Public Domain, CC BY-SA 4.0, and Apache 2.0 licenses. Proper compliance with these licenses is mandatory when using, modifying, or distributing this project.
+
+### Project License:
+Since this project integrates multiple open datasets, it does not follow a single unified license but rather adheres to the terms set by the specific datasets used.
 
 ### Dataset Licenses:
 - **CC0: Public Domain**: No attribution required.
@@ -146,7 +149,7 @@ We welcome contributions to the project! If you would like to improve features, 
 ## 📧 Contact Information
 If you have any questions or need further assistance, feel free to reach out:
 - **Email**: pothuvarun@gmail.com
-- **GitHub**: [Your GitHub Profile](https://github.com/varunpothu)
+- **GitHub**: [GitHub Profile](https://github.com/varunpothu)
   
 Academic Usage:
 This project is submitted as part of my final academic project. If you are using or adapting this project for academic purposes, please ensure that appropriate attribution is provided to both the original dataset authors and this project.
