@@ -14,8 +14,7 @@ The **Smart Healthcare Chatbot** is an AI-driven system that provides personaliz
 6. [API Integration](#-api-integration)
 7. [Project Structure](#-project-structure)
 8. [License & Attribution](#-license--attribution)
-9. [Contributing](#-contributing)
-10. [Contact Information](#-contact-information)
+9. [Contact Information](#-contact-information)
 
 ## ✨ Features
 - **🤖 Virtual Consultation**: Users can input symptoms or health concerns to receive condition analysis and next-step recommendations.
@@ -75,6 +74,8 @@ Once the Flask server is running, you can interact with the chatbot by entering 
 - Reminders for taking prescribed medications
 - Emergency assistance by showing nearby NHS facilities
 
+  ![Smart_HealthCare_Chatbot1](https://drive.google.com/file/d/1pHuY-uZXCOfoc19Oqq3dIqeUAih2QFWI)
+
 ## 📂 Datasets
 This project utilizes various datasets to provide accurate health recommendations. The datasets are hosted on Kaggle and are subject to different licenses. Ensure you review and comply with the dataset licenses.
 
@@ -129,24 +130,6 @@ Since this project integrates multiple open datasets, it does not follow a singl
 - **CC0: Public Domain**: No attribution required.
 - **CC BY-SA 4.0**: Attribution required, and any derivatives must be shared under the same license.
 - **Apache 2.0**: Free to use for commercial purposes with proper attribution.
-
-## 🤝 Contributing
-We welcome contributions to the project! If you would like to improve features, fix bugs, or add new functionalities, feel free to fork the repository and submit a pull request.
-
-1. **Fork the repository**.
-2. **Create a new branch**:
-   ```bash
-   git checkout -b feature/your-feature
-   ```
-3. **Commit your changes**:
-   ```bash
-   git commit -m "Add new feature"
-   ```
-4. **Push to the branch**:
-   ```bash
-   git push origin feature/your-feature
-   ```
-5. **Open a pull request**.
 
 ## 📧 Contact Information
 If you have any questions or need further assistance, feel free to reach out:
