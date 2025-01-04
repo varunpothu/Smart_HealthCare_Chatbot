@@ -15,19 +15,15 @@ The **Smart Healthcare Chatbot** is an AI-driven system that provides personaliz
 ## ✨ Features
 - **🤖 Virtual Consultation**: Users can input symptoms or health concerns to receive condition analysis and next-step recommendations.
 - **🩺 Symptom Checker**: Helps users analyze symptoms and suggests potential health conditions.
-- **💊 Medication Reminders**: Users can set reminders for taking medications based on doctor prescriptions.
-- **📚 Health Education**: Offers information about health conditions, medicines, and general wellness.
-- **🚨 Emergency Assistance**: Detects emergency conditions and locates nearby NHS facilities using real-time location data.
-- **🔍 Personalized Nutrition Suggestions**: Recommends appropriate nutrition based on health conditions.
-- **🧑‍⚕️ Doctor and Hospital Recommendations**: Suggests the exact type of doctor and nearest hospitals for consultation based on symptoms.
-- **📍 Location-Based Assistance**: Utilizes the user's current location to show nearby medical facilities and doctors.
+- **📚 Health Education**: Offers information about health conditions, medicines for general wellness.
+- **🚨 Emergency Assistance**: Detects emergency conditions.
+
 
 
 ## 🚀 Usage
 Once the Flask server is running, you can interact with the chatbot by entering health symptoms or concerns. The chatbot provides:
 - Symptom analysis and potential health conditions
 - Medication information, including usage, side effects, and substitutes
-- Reminders for taking prescribed medications
 - Emergency assistance by showing nearby NHS facilities
 
 ![Smart_HealthCare_Chatbot1](https://drive.google.com/uc?id=1pHuY-uZXCOfoc19Oqq3dIqeUAih2QFWI)
@@ -36,25 +32,13 @@ Once the Flask server is running, you can interact with the chatbot by entering 
 This project utilizes various datasets to provide accurate health recommendations. The datasets are hosted on Kaggle and are subject to different licenses. Ensure you review and comply with the dataset licenses.
 
 ### Datasets:
-1. **[Medicine Recommendation System Dataset](https://www.kaggle.com/datasets/noorsaeed/medicine-recommendation-system-dataset/data)**  
-   License: **Apache 2.0**
-   
-2. **[11000 Medicine Details Dataset](https://www.kaggle.com/datasets/singhnavjot2062001/11000-medicine-details)**  
+1. **[11000 Medicine Details Dataset](https://www.kaggle.com/datasets/singhnavjot2062001/11000-medicine-details)**  
    License: **CC0: Public Domain**
 
-3. **[WebMD Drug Reviews Dataset](https://www.kaggle.com/datasets/rohanharode07/webmd-drug-reviews-dataset/data)**  
-   License: **CC0: Public Domain**
-
-4. **[Drugs Side Effects and Medical Condition Dataset](https://www.kaggle.com/datasets/jithinanievarghese/drugs-side-effects-and-medical-condition)**  
-   License: **CC0: Public Domain**
-
-5. **[MedQuAD Medical Question Answer Dataset](https://www.kaggle.com/datasets/pythonafroz/medquad-medical-question-answer-for-ai-research/data)**  
+2. **[MedQuAD Medical Question Answer Dataset](https://www.kaggle.com/datasets/pythonafroz/medquad-medical-question-answer-for-ai-research/data)**  
    License: **CC BY-SA 4.0**
 
-6. **[LayoutLM Dataset](https://www.kaggle.com/datasets/jpmiller/layoutlm/data)**  
-   License: **CC BY-SA 4.0**
-
-7. **[250k Medicines Usage, Side Effects, and Substitutes Dataset](https://www.kaggle.com/datasets/shudhanshusingh/250k-medicines-usage-side-effects-and-substitutes)**  
+3. **[250k Medicines Usage, Side Effects, and Substitutes Dataset](https://www.kaggle.com/datasets/shudhanshusingh/250k-medicines-usage-side-effects-and-substitutes)**  
    License: **CC BY-SA 4.0**
 
 
