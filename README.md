@@ -1,4 +1,4 @@
-# 🏥 **Smart Healthcare Chatbot** for Personalized Health Condition Analysis
+# 🏥 **Smart Healthcare Chatbot** for Personalized Medical Assistance
 
 ## 🚀 Overview
 The **Smart Healthcare Chatbot** is an AI-driven system that provides personalized health condition analysis, symptom checking, virtual consultations, medication reminders, and health education. It offers real-time support for general health inquiries and can assist during emergencies by suggesting nearby NHS facilities using the user’s location. The chatbot integrates Machine Learning (ML), Natural Language Processing (NLP) and Large Language Model (LLM) techniques to analyze user inputs and give tailored recommendations.
@@ -22,10 +22,9 @@ The **Smart Healthcare Chatbot** is an AI-driven system that provides personaliz
 
 ## 🚀 Usage
 Once the Flask server is running, you can interact with the chatbot by entering health symptoms or concerns. The chatbot provides:
-- Symptom analysis and potential health conditions
+- Symptom analysis and Medicine Recommendation
 - Medication information, including usage, side effects, and substitutes
-- Emergency assistance by showing nearby NHS facilities
-
+- Dieases Question and Anaswering
 ![Smart_HealthCare_Chatbot1](https://drive.google.com/uc?id=1pHuY-uZXCOfoc19Oqq3dIqeUAih2QFWI)
 
 ## 📂 Datasets
