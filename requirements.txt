@@ -5,3 +5,4 @@ numpy
 textblob
 scikit-learn
 gdown
+tensorflow
