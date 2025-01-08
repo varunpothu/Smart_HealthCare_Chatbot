@@ -9,35 +9,53 @@ from sentence_transformers import SentenceTransformer
 from textblob import TextBlob
 import gdown
 import re
+import os
+
+# Google Drive File IDs and Paths
+file_ids = {
+    "gru_model": "1VCXEiEADyVz2NLJ8b0HGU8TftpZlFSS8",
+    "tokenizer": "122m9vzR4cvsRLC7lxlE8lcIfhVro_EPk",
+    "label_encoder": "12C6U60REeFWUEdxbNDOIWSA_hSE0YOGV",
+    "processed_data": "12MNsyrMBEylIhC__S0LPV_7cjhUTxFck",
+    "data5": "11xhQufvXsTwjb4iKLp4l5S0ube8af5Rs",
+    "cleaned_dataset": "11tLsqLqVF3WFLvcoTz0wcs0iYYbncMrH"
+}
+
+file_paths = {
+    "gru_model": "gru_model.h5",
+    "tokenizer": "tokenizer.pkl",
+    "label_encoder": "label_encoder.pkl",
+    "processed_data": "processed_data.csv",
+    "data5": "5.csv",
+    "cleaned_dataset": "cleaned_dataset_with_embeddings.pkl"
+}
 
 # Set page configuration
 st.set_page_config(page_title="Smart Healthcare Chatbot", layout="wide")
+
+# Function to download file from Google Drive
+def download_file_from_gdrive(file_id, output_path):
+    if not os.path.exists(output_path):
+        try:
+            url = f"https://drive.google.com/uc?id={file_id}&confirm=t"
+            gdown.download(url, output_path, quiet=False)
+        except Exception as e:
+            raise RuntimeError(f"Failed to download file from Google Drive: {e}")
 
 # Preprocess user query
 def preprocess_query(query):
     corrected_query = str(TextBlob(query).correct())
     return re.sub(r'[^\w\s]', '', corrected_query.lower()).strip()
 
-# Download the file from Google Drive
-def download_file_from_gdrive(file_id, output_path):
-    try:
-        url = f"https://drive.google.com/uc?id={file_id}&confirm=t"
-        gdown.download(url, output_path, quiet=False)
-    except Exception as e:
-        raise RuntimeError(f"Failed to download file from Google Drive: {e}")
+# Download required files
+for key, file_id in file_ids.items():
+    download_file_from_gdrive(file_id, file_paths[key])
 
 # Load resources for Disease Q&A
 @st.cache_resource
 def load_disease_resources():
-    # File ID from Google Drive
-    file_id = "11tLsqLqVF3WFLvcoTz0wcs0iYYbncMrH"  # Correct file ID
-    output_path = "cleaned_dataset_with_embeddings.pkl"
-
-    # Download the file
-    download_file_from_gdrive(file_id, output_path)
-
     # Load the dataset
-    with open(output_path, "rb") as f:
+    with open(file_paths["cleaned_dataset"], "rb") as f:
         df = pickle.load(f)
 
     # Load models
@@ -51,57 +69,39 @@ def load_disease_resources():
 @st.cache_resource
 def load_medicine_resources():
     # Load models and data
-    with open('symptom_embeddings.pkl', 'rb') as f:
-        symptom_embeddings = pickle.load(f)
-    with open('medicine_recommender.pkl', 'rb') as f:
-        medicine_recommender = pickle.load(f)
+    with open(file_paths["data5"], 'rb') as f:
+        data5 = pd.read_csv(file_paths["data5"])
 
-    data5 = pd.read_csv('/content/drive/MyDrive/5.csv')
-
-    return symptom_embeddings, medicine_recommender, data5
+    return data5
 
 # Functions for Medicine Recommendation
 def is_emergency(symptoms):
     emergency_symptoms = [
         "chest pain", "severe bleeding", "difficulty breathing", "sudden confusion",
-        "weakness or numbness on one side", "loss of consciousness", "severe headache",
-        "seizures", "severe burns", "uncontrolled vomiting", "high fever", "persistent dizziness",
-        "major trauma", "heart attack", "stroke", "difficulty speaking", "severe allergic reaction",
-        "intense abdominal pain", "continuous chest pressure", "sudden vision loss",
-        "high or low blood sugar", "severe dehydration", "painful swelling", "sudden severe back pain",
-        "persistent vomiting with blood", "sepsis symptoms", "head trauma", "difficulty walking"
+        "loss of consciousness", "heart attack", "stroke", "difficulty speaking"
     ]
     for emergency in emergency_symptoms:
         if emergency in symptoms.lower():
             return True
     return False
 
-def chatbot_response(symptoms, medicine_recommender, data5):
+def chatbot_response(symptoms, data5):
     if is_emergency(symptoms):
         return "This is an emergency. Please consult a healthcare professional immediately."
 
-    recommendations = medicine_recommender.recommend(symptoms, top_n=1)
-    if recommendations.empty:
-        return "No medicines found for the provided symptoms. Please consult a doctor."
-
-    medicine = recommendations.iloc[0]
-    side_effects = data5[data5['name'] == medicine['name']]['side_effects'].iloc[0] if 'side_effects' in data5.columns else 'Not available'
-    substitutes = data5[data5['name'] == medicine['name']]['substitutes'].iloc[0] if 'substitutes' in data5.columns else 'Not available'
-    therapeutic_class = data5[data5['name'] == medicine['name']]['Therapeutic Class'].iloc[0] if 'Therapeutic Class' in data5.columns else 'Not available'
-    manufacturer = data5[data5['name'] == medicine['name']]['Manufacturer'].iloc[0] if 'Manufacturer' in data5.columns else 'Not available'
-
+    # Placeholder for actual recommendation logic
     return {
-        "Medicine Name": medicine['name'],
-        "Uses": medicine['uses'],
-        "Side Effects": side_effects,
-        "Substitutes": substitutes,
-        "Therapeutic Class": therapeutic_class,
-        "Manufacturer": manufacturer
+        "Medicine Name": "Paracetamol",
+        "Uses": "Fever and mild pain relief",
+        "Side Effects": "Nausea, rash",
+        "Substitutes": "Acetaminophen",
+        "Therapeutic Class": "Analgesic",
+        "Manufacturer": "Generic"
     }
 
 # Load all resources
 mini_lm_model, distilroberta_model, bert_model, df = load_disease_resources()
-symptom_embeddings, medicine_recommender, data5 = load_medicine_resources()
+data5 = load_medicine_resources()
 
 # Sidebar for navigation
 st.sidebar.header("Navigation")
@@ -112,7 +112,7 @@ if selected_tab == "Disease Q&A":
     # Embedding selection for Disease Q&A
     embedding_type = st.sidebar.selectbox(
         "Choose Embedding Type:",
-        ["mini_lm_embedding", "distilroberta_embedding", "bert_embedding", "bert_embedding_normalized"]
+        ["mini_lm_embedding", "distilroberta_embedding", "bert_embedding"]
     )
 
     # Disease Q&A Main Interface
@@ -127,7 +127,7 @@ if selected_tab == "Disease Q&A":
             query_embedding = mini_lm_model.encode(query_clean).reshape(1, -1)
         elif embedding_type == "distilroberta_embedding":
             query_embedding = distilroberta_model.encode(query_clean).reshape(1, -1)
-        elif embedding_type in ["bert_embedding", "bert_embedding_normalized"]:
+        elif embedding_type == "bert_embedding":
             query_embedding = bert_model.encode(query_clean).reshape(1, -1)
 
         # Calculate cosine similarity
@@ -140,20 +140,13 @@ if selected_tab == "Disease Q&A":
         st.success(f"**Answer:** {top_match['answer']}")
         st.markdown(f"**Source:** {top_match['source']}")
         st.markdown(f"**Focus Area:** {top_match['focus_area']}")
-        st.markdown(f"**Similarity Score:** {top_match['similarity']:.2f}")
-
-        # Recommendations
-        st.subheader("Related Questions")
-        top_related = df.sort_values(by='similarity', ascending=False).head(3)
-        for _, row in top_related.iterrows():
-            st.write(f"- **{row['question_clean']}**")
 
 elif selected_tab == "Medicine Recommendation":
     # Medicine Recommendation Main Interface
     st.title("💊 Healthcare Medicine Recommendation Chatbot")
     user_input = st.text_input("Enter your symptoms:")
     if user_input:
-        response = chatbot_response(user_input, medicine_recommender, data5)
+        response = chatbot_response(user_input, data5)
         if isinstance(response, dict):
             st.write("### Medicine Details:")
             for key, value in response.items():
