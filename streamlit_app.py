@@ -1,18 +1,14 @@
+# Streamlit App for Healthcare Chatbot
 import streamlit as st
+import pickle
 import pandas as pd
 import numpy as np
-from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing.sequence import pad_sequences
-from sentence_transformers import SentenceTransformer
-from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from fuzzywuzzy import process
+from sentence_transformers import SentenceTransformer
+from textblob import TextBlob
 import gdown
-import joblib
+import re
 import os
-
-# Set page configuration
-st.set_page_config(page_title="Smart Healthcare Chatbot", layout="wide")
 
 # Google Drive File IDs and Paths
 file_ids = {
@@ -33,127 +29,114 @@ file_paths = {
     "cleaned_dataset": "cleaned_dataset_with_embeddings.pkl"
 }
 
-# Function to download files from Google Drive
-def download_file(file_id, output_path):
-    url = f"https://drive.google.com/uc?id={file_id}"
-    if not os.path.exists(output_path):
-        gdown.download(url, output_path, quiet=False)
+# Set page configuration
+st.set_page_config(page_title="Smart Healthcare Chatbot", layout="wide")
 
-# Download all required files
-for key, file_id in file_ids.items():
-    download_file(file_id, file_paths[key])
+# Function to download file from Google Drive
+def download_file_from_gdrive(file_id, output_path):
+    try:
+        if not os.path.exists(output_path):
+            url = f"https://drive.google.com/uc?id={file_id}&confirm=t"
+            gdown.download(url, output_path, quiet=False)
+    except Exception as e:
+        st.error(f"Failed to download file: {output_path}. Please ensure it exists.")
+        raise e
 
-# Load Models and Data
-gru_model = load_model(file_paths["gru_model"])
-tokenizer = joblib.load(file_paths["tokenizer"])
-label_encoder = joblib.load(file_paths["label_encoder"])
-processed_data = pd.read_csv(file_paths["processed_data"])
-data5 = pd.read_csv(file_paths["data5"])
-mini_lm_model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+# Preprocess user query
+def preprocess_query(query):
+    corrected_query = str(TextBlob(query).correct())
+    return re.sub(r'[^\w\s]', '', corrected_query.lower()).strip()
 
-# Emergency Symptoms
-emergency_symptoms = [
-    "chest pain", "severe bleeding", "difficulty breathing", "sudden confusion",
-    "weakness or numbness on one side", "loss of consciousness", "severe headache",
-    "seizures", "severe burns", "uncontrolled vomiting", "high fever", "persistent dizziness",
-    "major trauma", "heart attack", "stroke", "difficulty speaking", "severe allergic reaction",
-    "intense abdominal pain", "continuous chest pressure", "sudden vision loss",
-    "high or low blood sugar", "severe dehydration", "painful swelling", "sudden severe back pain",
-    "persistent vomiting with blood", "sepsis symptoms", "head trauma", "difficulty walking"
-]
+# Load resources for Disease Q&A
+@st.cache_resource
+def load_disease_resources():
+    download_file_from_gdrive(file_ids["cleaned_dataset"], file_paths["cleaned_dataset"])
+    with open(file_paths["cleaned_dataset"], "rb") as f:
+        df = pickle.load(f)
+    mini_lm_model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+    distilroberta_model = SentenceTransformer('sentence-transformers/all-distilroberta-v1')
+    bert_model = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
+    return mini_lm_model, distilroberta_model, bert_model, df
 
-# Function to check for emergency scenarios
+# Load resources for Medicine Recommendation
+@st.cache_resource
+def load_medicine_resources():
+    download_file_from_gdrive(file_ids["data5"], file_paths["data5"])
+    data5 = pd.read_csv(file_paths["data5"])
+    return data5
+
+# Functions for Medicine Recommendation
 def is_emergency(symptoms):
+    emergency_symptoms = [
+        "chest pain", "severe bleeding", "difficulty breathing", "sudden confusion",
+        "loss of consciousness", "heart attack", "stroke", "difficulty speaking"
+    ]
     for emergency in emergency_symptoms:
         if emergency in symptoms.lower():
             return True
     return False
 
-# Medicine Details Functionality
-def get_medicine_details(medicine_name):
-    corrected_name = correct_medicine_name(medicine_name)
-    if corrected_name:
-        details = processed_data[processed_data['medicine_name'] == corrected_name].iloc[0]
-        return {
-            "Medicine Name": details['medicine_name'],
-            "Uses": details['combined_uses'],
-            "Side Effects": details['combined_side_effects'],
-            "Substitutes": details['combined_substitutes'],
-            "Therapeutic Class": details['therapeutic_class'],
-            "Image URL": details['image_url'],
-            "Manufacturer": details['manufacturer']
-        }
-    else:
-        return {"Error": "Medicine not found. Please check the spelling or try another name."}
-
-# Medicine Recommendation Functionality
-def recommend_medicine(symptoms):
+def recommend_medicine(symptoms, data5):
     if is_emergency(symptoms):
         return "This is an emergency. Please consult a healthcare professional immediately."
     
-    vectorizer = TfidfVectorizer(stop_words='english')
-    tfidf_matrix = vectorizer.fit_transform(data5['uses'])
-    user_vector = vectorizer.transform([symptoms])
-    similarity_scores = cosine_similarity(user_vector, tfidf_matrix)
-    top_indices = similarity_scores.argsort()[0][-3:][::-1]
-    return data5.iloc[top_indices][['name', 'uses']]
+    # Convert user symptoms to lowercase
+    symptoms = symptoms.lower()
+    
+    # Check if symptoms match any entries in the dataset
+    matches = data5[data5['Symptoms'].str.contains(symptoms, case=False, na=False)]
+    
+    if not matches.empty:
+        # Return the first match or all matches
+        return matches.iloc[0].to_dict()  # Return as a dictionary
+    else:
+        return "No suitable medicine found for the given symptoms. Please consult a healthcare professional."
 
-# Disease Q&A Functionality
-def answer_disease_query(query):
-    with open(file_paths["cleaned_dataset"], "rb") as f:
-        df = pickle.load(f)
+# Sidebar for navigation
+st.sidebar.header("Navigation")
+tabs = ["Disease Q&A", "Medicine Recommendation"]
+selected_tab = st.sidebar.selectbox("Choose a Tab", tabs)
 
-    query_embedding = mini_lm_model.encode(query).reshape(1, -1)
-    df['similarity'] = df['mini_lm_embedding'].apply(
-        lambda x: cosine_similarity(query_embedding, np.array(x).reshape(1, -1))[0][0]
+if selected_tab == "Disease Q&A":
+    # Lazy loading for Disease Q&A
+    st.info("Loading Disease Q&A resources...")
+    mini_lm_model, distilroberta_model, bert_model, df = load_disease_resources()
+    embedding_type = st.sidebar.selectbox(
+        "Choose Embedding Type:",
+        ["mini_lm_embedding", "distilroberta_embedding", "bert_embedding"]
     )
-    top_match = df.loc[df['similarity'].idxmax()]
-    return {
-        "Answer": top_match['answer'],
-        "Source": top_match['source'],
-        "Focus Area": top_match['focus_area']
-    }
+    st.title("🩺 Smart Healthcare Chatbot - Disease Q&A")
+    user_query = st.text_input("Ask your healthcare question:", placeholder="Type your question here...")
+    if user_query:
+        query_clean = preprocess_query(user_query)
+        if embedding_type == "mini_lm_embedding":
+            query_embedding = mini_lm_model.encode(query_clean).reshape(1, -1)
+        elif embedding_type == "distilroberta_embedding":
+            query_embedding = distilroberta_model.encode(query_clean).reshape(1, -1)
+        elif embedding_type == "bert_embedding":
+            query_embedding = bert_model.encode(query_clean).reshape(1, -1)
+        df['similarity'] = df[embedding_type].apply(
+            lambda x: cosine_similarity(query_embedding, np.array(x).reshape(1, -1))[0][0]
+        )
+        top_match = df.loc[df['similarity'].idxmax()]
+        st.success(f"**Answer:** {top_match['answer']}")
+        st.markdown(f"**Source:** {top_match['source']}")
+        st.markdown(f"**Focus Area:** {top_match['focus_area']}")
 
-# Streamlit App
-st.title("Smart Healthcare Chatbot")
-
-# Tabs for navigation
-tab1, tab2, tab3 = st.tabs(["Disease Q&A", "Medicine Recommendation", "Medicine Details"])
-
-# Tab 1: Disease Q&A
-with tab1:
-    st.header("🩺 Disease Q&A Chatbot")
-    user_input = st.text_input("Ask a healthcare question:", "")
+elif selected_tab == "Medicine Recommendation":
+    # Lazy loading for Medicine Recommendation
+    st.info("Loading Medicine Recommendation resources...")
+    data5 = load_medicine_resources()
+    st.title("💊 Healthcare Medicine Recommendation Chatbot")
+    user_input = st.text_input("Enter your symptoms:")
     if user_input:
-        response = answer_disease_query(user_input)
-        st.write(f"**Answer:** {response['Answer']}")
-        st.write(f"**Source:** {response['Source']}")
-        st.write(f"**Focus Area:** {response['Focus Area']}")
-
-# Tab 2: Medicine Recommendation
-with tab2:
-    st.header("💊 Medicine Recommendation Chatbot")
-    user_input = st.text_input("Enter your symptoms:", "")
-    if user_input:
-        recommendations = recommend_medicine(user_input)
-        if isinstance(recommendations, str):  # Emergency response
-            st.write(recommendations)
-        else:
-            st.write("### Recommended Medicines:")
-            st.write(recommendations)
-
-# Tab 3: Medicine Details
-with tab3:
-    st.header("🔍 Medicine Details Lookup")
-    user_input = st.text_input("Enter Medicine Name:", "")
-    if user_input:
-        details = get_medicine_details(user_input)
-        if "Error" in details:
-            st.write(details["Error"])
-        else:
+        response = recommend_medicine(user_input, data5)
+        if isinstance(response, dict):
             st.write("### Medicine Details:")
-            for key, value in details.items():
-                if key == "Image URL" and value != "Not Available":
-                    st.image(value, caption="Medicine Image")
-                else:
-                    st.write(f"**{key}:** {value}")
+            for key, value in response.items():
+                st.write(f"**{key}:** {value}")
+        else:
+            st.warning(response)
+
+# Footer
+st.info("💡 For accurate healthcare advice, consult a medical professional.")
