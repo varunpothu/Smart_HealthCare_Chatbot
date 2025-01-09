@@ -1,11 +1,8 @@
 streamlit
-sentence-transformers==2.2.2
-transformers==4.31.0
-torch==2.5.1 
-tensorflow==2.18.0
-scikit-learn
 pandas
 numpy
-gdown
+scikit-learn
+sentence-transformers
 textblob
-fuzzywuzzy
+gdown
+Pillow
